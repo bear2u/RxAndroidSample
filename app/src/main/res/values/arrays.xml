@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="items">
+        <item>Background / Main Thread 분리 예제</item>
+        <item>간단한 buffer 테스트</item>
+    </string-array>
+</resources>
