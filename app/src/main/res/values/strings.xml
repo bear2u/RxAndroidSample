@@ -1,5 +1,13 @@
 <resources>
-    <string name="app_name">RxAndroidSample</string>
+    <string name="app_name">RxJava 예제모음</string>
 
+    <string name="frag_using_retrofit">레트로핏 활용 예제</string>
+    <string name="frag_caching_strategy">캐싱 리스트 예제</string>
+
+    <string name="rxjava_gist_owner_name">ReactiveX</string>
+    <string name="rxjava_repo_name">RxJava</string>
+
+    <string name="progress_loading">loading...</string>
+    <string name="seekbar_delay_time">cache delay(%s sec)</string>
 
 </resources>

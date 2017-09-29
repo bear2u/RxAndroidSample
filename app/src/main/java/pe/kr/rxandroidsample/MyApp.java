@@ -1,17 +1,18 @@
 package pe.kr.rxandroidsample;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.squareup.leakcanary.LeakCanary;
 
-/**
- * Created by dev on 2017-09-27.
- */
+import timber.log.Timber;
 
 public class MyApp extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Timber.plant(new Timber.DebugTree());
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
