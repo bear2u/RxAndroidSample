@@ -49,6 +49,15 @@ public class RetrofitSampleFrag extends BaseFrag implements MyFragmentRecyclerVi
     @BindView(R.id.progressBar)
     ProgressBar progressDialog;
 
+    public static RetrofitSampleFrag newInstance(String title) {
+
+        Bundle args = new Bundle();
+        args.putString("title" , title);
+
+        RetrofitSampleFrag fragment = new RetrofitSampleFrag();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -57,7 +66,7 @@ public class RetrofitSampleFrag extends BaseFrag implements MyFragmentRecyclerVi
         unbinder = ButterKnife.bind(this , view);
 
         if(onFragmentTitleListener != null){
-            onFragmentTitleListener.setTitle(getString(R.string.frag_using_retrofit));
+            onFragmentTitleListener.setTitle( getArguments().getString("title"));
         }
         return view;
     }

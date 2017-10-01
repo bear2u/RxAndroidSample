@@ -18,15 +18,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pe.kr.rxandroidsample.fragments.BaseFrag;
 import pe.kr.rxandroidsample.fragments.CachingStrategyListSampleFrag;
+import pe.kr.rxandroidsample.fragments.FormValidationSampleFrag;
 import pe.kr.rxandroidsample.fragments.RetrofitSampleFrag;
 
 public class MainActivity extends AppCompatActivity
         implements MyRecyclerViewAdapter.ItemClickListener , BaseFrag.OnFragmentTitleListener{
 
+    private static final int _USING_RETROFIT_FRAGMENT = 0;
+    private static final int _USING_RETROFIT_WITH_CACHING = 1;
+    private static final int _USING_VALIDATION_CHECK = 2;
+
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
     MyRecyclerViewAdapter adapter;
+    List<String> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         // data to populate the RecyclerView with
-        List<String> items = Arrays.asList(getResources().getStringArray(R.array.items));
+         items = Arrays.asList(getResources().getStringArray(R.array.items));
 
         // set up the RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -61,13 +67,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     public Fragment getFragment(int pos) {
+        String title = items.get(pos);
         Fragment fragment = null;
         switch (pos){
-            case 0:
-                fragment = new RetrofitSampleFrag();
+            case _USING_RETROFIT_FRAGMENT:
+                fragment = RetrofitSampleFrag.newInstance( title );
                 break;
-            case 1:
-                fragment = new CachingStrategyListSampleFrag();
+            case _USING_RETROFIT_WITH_CACHING:
+                fragment = CachingStrategyListSampleFrag.newInstance( title );
+                break;
+            case _USING_VALIDATION_CHECK:
+                fragment = FormValidationSampleFrag.newInstance( title );
                 break;
         }
 

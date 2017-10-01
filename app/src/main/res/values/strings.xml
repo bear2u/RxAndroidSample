@@ -8,6 +8,6 @@
     <string name="rxjava_repo_name">RxJava</string>
 
     <string name="progress_loading">loading...</string>
-    <string name="seekbar_delay_time">cache delay(%s sec)</string>
+    <string name="seekbar_delay_time">cache delay(%d sec)</string>
 
 </resources>

@@ -3,7 +3,7 @@
     <string-array name="items">
         <item>Retrofit 활용한 예제</item>
         <item>캐싱을 이용한 예제</item>
-        <item>추가중...</item>
+        <item>유효성 검사</item>
     </string-array>
 
     <string-array name="items_sample">

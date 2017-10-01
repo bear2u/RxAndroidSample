@@ -69,6 +69,16 @@ public class CachingStrategyListSampleFrag extends BaseFrag implements MyFragmen
 
     private int default_delay_time = 0;
 
+    public static CachingStrategyListSampleFrag newInstance(String title) {
+
+        Bundle args = new Bundle();
+        args.putString("title" , title);
+
+        CachingStrategyListSampleFrag fragment = new CachingStrategyListSampleFrag();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,7 +86,7 @@ public class CachingStrategyListSampleFrag extends BaseFrag implements MyFragmen
         unbinder = ButterKnife.bind(this, view);
 
         if (onFragmentTitleListener != null) {
-            onFragmentTitleListener.setTitle(getString(R.string.frag_caching_strategy));
+            onFragmentTitleListener.setTitle(getArguments().getString("title"));
         }
         return view;
     }
