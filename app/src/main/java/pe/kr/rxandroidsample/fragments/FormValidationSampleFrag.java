@@ -21,11 +21,13 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import pe.kr.rxandroidsample.R;
 
 import static android.text.TextUtils.isEmpty;
 import static android.util.Patterns.EMAIL_ADDRESS;
+import static florent37.github.com.rxlifecycle.RxLifecycle.disposeOnDestroy;
 import static pe.kr.rxandroidsample.LogUtils._log;
 
 /**
@@ -50,6 +52,7 @@ public class FormValidationSampleFrag extends BaseFrag implements MyFragmentRecy
     Flowable<CharSequence> _passwordFlowable;
 
     Unbinder unbinder;
+    Disposable disposable;
 
     public static FormValidationSampleFrag newInstance(String title) {
 
@@ -80,12 +83,20 @@ public class FormValidationSampleFrag extends BaseFrag implements MyFragmentRecy
 
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(disposable!=null && !disposable.isDisposed()) {
+            disposable.dispose();
+        }
+    }
+
     private void initView(){
         _emailFlowable = RxTextView.textChanges(et_email).skip(1).toFlowable(BackpressureStrategy.LATEST);
         _numberFlowable = RxTextView.textChanges(et_num).skip(1).toFlowable(BackpressureStrategy.LATEST);
         _passwordFlowable = RxTextView.textChanges(et_password).skip(1).toFlowable((BackpressureStrategy.LATEST));
 
-        Flowable.combineLatest( _emailFlowable , _passwordFlowable , _numberFlowable  , (newEmail , newPassword , newNumber) ->{
+        disposable = Flowable.combineLatest( _emailFlowable , _passwordFlowable , _numberFlowable  , (newEmail , newPassword , newNumber) ->{
             _log("contents : " + newEmail + "," + newPassword + "," + newNumber);
 
             boolean isEmailValid = !isEmpty(newEmail) && EMAIL_ADDRESS.matcher(newEmail).matches();
@@ -98,15 +109,10 @@ public class FormValidationSampleFrag extends BaseFrag implements MyFragmentRecy
                 et_password.setError( "Password Error" );
             }
 
-            boolean isNumbericTest = NumberUtils.isCreatable( newNumber.toString() );
-            _log("isNumber-> " + isNumbericTest + "," + newNumber);
-
             boolean isNumberic = !isEmpty(newNumber) && NumberUtils.isCreatable( newNumber.toString() );
             if(!isNumberic){
                 et_num.setError("Numberic Error");
             }
-
-            _log("validation -> " + isEmailValid);
 
             return isEmailValid && isPasswordValid && isNumberic;
         })
