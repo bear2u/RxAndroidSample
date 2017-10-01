@@ -138,7 +138,7 @@ public class SearchExampleFrag extends BaseFrag implements MyFragmentRecyclerVie
         String repo_name = getString(R.string.rxjava_repo_name);
 
 
-        String token = null;
+        String token = null; // 오류가 걸리면 Github api token 입력해야함
         Observable<List<Contributor>> observable = GithubService.createGitHubApi( token )
                 .contributors( owner , repo_name)
                 .doOnSuccess( list -> mHandler.sendEmptyMessage( atomicInteger.incrementAndGet() ))
