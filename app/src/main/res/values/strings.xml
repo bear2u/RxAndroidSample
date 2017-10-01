@@ -9,5 +9,7 @@
 
     <string name="progress_loading">loading...</string>
     <string name="seekbar_delay_time">cache delay(%d sec)</string>
+    <string name="plz_search_name">Please search name</string>
+    <string name="bt_call_count">NetWork Call : %d</string>
 
 </resources>

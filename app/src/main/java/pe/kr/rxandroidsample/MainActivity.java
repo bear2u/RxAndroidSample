@@ -20,6 +20,7 @@ import pe.kr.rxandroidsample.fragments.BaseFrag;
 import pe.kr.rxandroidsample.fragments.CachingStrategyListSampleFrag;
 import pe.kr.rxandroidsample.fragments.FormValidationSampleFrag;
 import pe.kr.rxandroidsample.fragments.RetrofitSampleFrag;
+import pe.kr.rxandroidsample.fragments.SearchExampleFrag;
 
 public class MainActivity extends AppCompatActivity
         implements MyRecyclerViewAdapter.ItemClickListener , BaseFrag.OnFragmentTitleListener{
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity
     private static final int _USING_RETROFIT_FRAGMENT = 0;
     private static final int _USING_RETROFIT_WITH_CACHING = 1;
     private static final int _USING_VALIDATION_CHECK = 2;
+    private static final int _USING_DEBOUNCE_SEARCH_BAR = 3;
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -67,8 +69,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     public Fragment getFragment(int pos) {
-        String title = items.get(pos);
         Fragment fragment = null;
+        if(pos >= items.size())
+            return fragment;
+
+        String title = items.get(pos);
         switch (pos){
             case _USING_RETROFIT_FRAGMENT:
                 fragment = RetrofitSampleFrag.newInstance( title );
@@ -78,6 +83,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case _USING_VALIDATION_CHECK:
                 fragment = FormValidationSampleFrag.newInstance( title );
+                break;
+            case _USING_DEBOUNCE_SEARCH_BAR:
+                fragment = SearchExampleFrag.newInstance( title );
                 break;
         }
 
