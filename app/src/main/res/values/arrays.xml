@@ -2,9 +2,10 @@
 <resources>
     <string-array name="items">
         <item>Retrofit 활용한 예제</item>
-        <item>캐싱을 이용한 예제</item>
-        <item>유효성 검사</item>
-        <item>검색 예제</item>
+        <item>캐싱 리스트(merge,concat,publish_selector)</item>
+        <item>유효성 검사(combinelatest)</item>
+        <item>검색 예제(debounce,SwitchMap)</item>
+        <item>DiffUtil 활용</item>
     </string-array>
 
     <string-array name="items_sample">

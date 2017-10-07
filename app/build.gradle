@@ -6,7 +6,7 @@ ext{
 }
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "pe.kr.rxandroidsample"
         minSdkVersion 23
@@ -22,11 +22,11 @@ android {
         }
     }
 
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-        }
-    }
+//    testOptions {
+//        unitTests {
+//            includeAndroidResources = true
+//        }
+//    }
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8

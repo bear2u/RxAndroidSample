@@ -5,7 +5,9 @@
     xmlns:rsb="http://schemas.android.com/apk/res-auto"
     android:background="@color/LightGrey"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:clickable="true"
+    >
 
     <LinearLayout
         android:id="@+id/btn_group"

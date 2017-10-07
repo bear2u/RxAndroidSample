@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/LightGrey"
     android:gravity="center"
+    android:clickable="true"
     >
 
     <android.support.v7.widget.RecyclerView
