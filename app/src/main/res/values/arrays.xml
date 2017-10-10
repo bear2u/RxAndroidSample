@@ -5,8 +5,9 @@
         <item>캐싱 리스트(merge,concat,publish_selector)</item>
         <item>유효성 검사(combinelatest)</item>
         <item>검색 예제(debounce,SwitchMap)</item>
-        <item>DiffUtil 활용</item>
+        <item>DiffUtil 활용(scan , diffutil)</item>
         <item>다중 네트워크 접속 예제</item>
+        <item>RxEventBus (RxRelay)</item>
     </string-array>
 
     <string-array name="items_sample">

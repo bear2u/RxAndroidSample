@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Single;
@@ -41,6 +42,8 @@ import pe.kr.rxandroidsample.Contributor;
 import pe.kr.rxandroidsample.GithubService;
 import pe.kr.rxandroidsample.Helper;
 import pe.kr.rxandroidsample.R;
+import pe.kr.rxandroidsample.models.MultipleNetworkingSampleDataCls;
+import pe.kr.rxandroidsample.models.MultipleRealNetworkingSampleDataCls;
 
 import static pe.kr.rxandroidsample.LogUtils._log;
 
@@ -159,45 +162,42 @@ public class MultipleNetworkingSampleFrag extends BaseFrag implements MyFragment
         final ExecutorService executor = new ThreadPoolExecutor(4, 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         try {
 
-            Future<String> f1 = executor.submit(new CallToRemoteServiceA());
-            Observable<String> f1Observable = Observable.fromFuture(f1);
-            Observable<String> f3Observable = f1Observable
+            Future<Flowable<List<Contributor>>> f1 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceA());
+            Flowable<List<Contributor>> f1Observable = Flowable.fromFuture(f1);
+            Observable<List<Contributor>> f3Observable = f1Observable
                     .flatMap(s -> {
                         System.out.println("Observed from f1: " + s);
-                        Future<String> f3 = executor.submit(new CallToRemoteServiceC(s));
+                        Future<Flowable<List<Contributor>>> f3 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceC(s));
                         return Observable.fromFuture(f3);
-                    });
+                    })
 
 
-            Future<Integer> f2 = executor.submit(new CallToRemoteServiceB());
-            Observable<Integer> f2Observable = Observable.fromFuture(f2);
-            Observable<Integer> f4Observable = f2Observable
+            Future<Flowable<List<Contributor>>> f2 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceB());
+            Flowable<List<Contributor>> f2Observable = Observable.fromFuture(f2);
+            Flowable<List<Contributor>> f4Observable = f2Observable
                     .flatMap(integer -> {
                         System.out.println("Observed from f2: " + integer);
-                        Future<Integer> f4 = executor.submit(new CallToRemoteServiceD(integer));
+                        Future<Flowable<List<Contributor>>> f4 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceD(0));
                         return Observable.fromFuture(f4);
                     });
 
-            Observable<Integer> f5Observable = f2Observable
-                    .flatMap(integer -> {
-                        System.out.println("Observed from f2: " + integer);
-                        Future<Integer> f5 = executor.submit(new CallToRemoteServiceE(integer));
+            Flowable<List<Contributor>> f5Observable = f2Observable
+                    .flatMap(s -> {
+                        System.out.println("Observed from f2: " + s);
+                        Future<Flowable<List<Contributor>>> f5 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceE(0));
                         return Observable.fromFuture(f5);
                     });
 
-            Observable.zip(f3Observable, f4Observable, f5Observable, new Function3<String, Integer, Integer, Map<String,String>>() {
+            Observable.zip(f3Observable, f4Observable, f5Observable, (map1, map2, map3) -> {
+                Map<String, List<Contributor>> map = new HashMap<>();
+                map.put("f3", map1);
+                map.put("f4", map2);
+                map.put("f5", map3);
+                return map;
+            }).subscribe(new Consumer<Map<String, List<Contributor>>>() {
                 @Override
-                public Map<String, String> apply(String s, Integer integer, Integer integer2) throws Exception {
-                    Map<String, String> map = new HashMap<String, String>();
-                    map.put("f3", s);
-                    map.put("f4", String.valueOf(integer));
-                    map.put("f5", String.valueOf(integer2));
-                    return map;
-                }
-            }).subscribe(new Consumer<Map<String, String>>() {
-                @Override
-                public void accept(Map<String, String> map) throws Exception {
-                    System.out.println(map.get("f3") + " => " + (Integer.valueOf(map.get("f4")) * Integer.valueOf(map.get("f5"))));
+                public void accept(Map<String, List<Contributor>> map) throws Exception {
+
                 }
             });
 
@@ -206,75 +206,5 @@ public class MultipleNetworkingSampleFrag extends BaseFrag implements MyFragment
         }
     }
 
-    private static final class CallToRemoteServiceA implements Callable<String> {
-        @Override
-        public String call() throws Exception {
-            System.out.println("A called");
-            // simulate fetching data from remote service
-            Thread.sleep(100);
-            return "responseA";
-        }
-    }
-
-    private static final class CallToRemoteServiceB implements Callable<Integer> {
-        @Override
-        public Integer call() throws Exception {
-            System.out.println("B called");
-            // simulate fetching data from remote service
-            Thread.sleep(40);
-            return 100;
-        }
-    }
-
-    private static final class CallToRemoteServiceC implements Callable<String> {
-
-        private final String dependencyFromA;
-
-        public CallToRemoteServiceC(String dependencyFromA) {
-            this.dependencyFromA = dependencyFromA;
-        }
-
-        @Override
-        public String call() throws Exception {
-            System.out.println("C called");
-            // simulate fetching data from remote service
-            Thread.sleep(60);
-            return "responseB_" + dependencyFromA;
-        }
-    }
-
-    private static final class CallToRemoteServiceD implements Callable<Integer> {
-
-        private final Integer dependencyFromB;
-
-        public CallToRemoteServiceD(Integer dependencyFromB) {
-            this.dependencyFromB = dependencyFromB;
-        }
-
-        @Override
-        public Integer call() throws Exception {
-            System.out.println("D called");
-            // simulate fetching data from remote service
-            Thread.sleep(140);
-            return 40 + dependencyFromB;
-        }
-    }
-
-    private static final class CallToRemoteServiceE implements Callable<Integer> {
-
-        private final Integer dependencyFromB;
-
-        public CallToRemoteServiceE(Integer dependencyFromB) {
-            this.dependencyFromB = dependencyFromB;
-        }
-
-        @Override
-        public Integer call() throws Exception {
-            System.out.println("E called");
-            // simulate fetching data from remote service
-            Thread.sleep(55);
-            return 5000 + dependencyFromB;
-        }
-    }
 
 }

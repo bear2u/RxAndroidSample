@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-ext{
+ext {
     okhttpVersion = "3.9.0"
     retrofitVersion = "2.3.0"
     supportLibVersion = "26.1.0"

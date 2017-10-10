@@ -1,5 +1,6 @@
 package pe.kr.rxandroidsample;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     private static final int _USING_DEBOUNCE_SEARCH_BAR = 3;
     private static final int _USING_DIFFUTIL = 4;
     private static final int _USING_MULTIPLE_NETWORKING_CONNECT = 5;
+    private static final int _USING_RXEVENTBUS = 6;
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -69,7 +71,17 @@ public class MainActivity extends AppCompatActivity
             ft.addToBackStack(null);
             ft.commit();
             Log.d("KTH" , "clicked");
+        }else{
+            switch (position){
+                case _USING_RXEVENTBUS:
+                    Intent intent = new Intent(this , RxEventBusMainActivity.class);
+                    intent.putExtra("title" ,items.get(position) );
+                    startActivity(intent);
+                break;
+            }
         }
+
+
     }
 
     public Fragment getFragment(int pos) {
