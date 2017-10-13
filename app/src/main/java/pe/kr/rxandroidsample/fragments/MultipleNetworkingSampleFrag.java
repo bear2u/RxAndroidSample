@@ -16,11 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -28,21 +27,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Function3;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import pe.kr.rxandroidsample.Contributor;
 import pe.kr.rxandroidsample.GithubService;
 import pe.kr.rxandroidsample.Helper;
 import pe.kr.rxandroidsample.R;
-import pe.kr.rxandroidsample.models.MultipleNetworkingSampleDataCls;
 import pe.kr.rxandroidsample.models.MultipleRealNetworkingSampleDataCls;
 
 import static pe.kr.rxandroidsample.LogUtils._log;
@@ -147,59 +140,67 @@ public class MultipleNetworkingSampleFrag extends BaseFrag implements MyFragment
         };
     }
 
+    long start;
     private void start(){
         try {
-            long start = System.currentTimeMillis();
+            start = System.currentTimeMillis();
             run();
-            System.out.println("Finished in: " + (System.currentTimeMillis() - start) + "ms");
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void networkRun(){
+//        Flowable<List<Contributor>> f1 = new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceA()
+
+    }
+
     private void run() throws Exception {
-        final ExecutorService executor = new ThreadPoolExecutor(4, 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+        final ExecutorService executor = new ThreadPoolExecutor(10, 10, 1, TimeUnit.MINUTES, new LinkedBlockingDeque<>());
         try {
 
             Future<Flowable<List<Contributor>>> f1 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceA());
-            Flowable<List<Contributor>> f1Observable = Flowable.fromFuture(f1);
-            Observable<List<Contributor>> f3Observable = f1Observable
+            Flowable<Flowable<List<Contributor>>> f1Observable = Flowable.fromFuture(f1);
+            Flowable<List<Contributor>> f3Observable = f1Observable
                     .flatMap(s -> {
                         System.out.println("Observed from f1: " + s);
-                        Future<Flowable<List<Contributor>>> f3 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceC(s));
-                        return Observable.fromFuture(f3);
-                    })
-
+                        Future<Flowable<List<Contributor>>> f3 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceC(""));
+                        return Flowable.fromFuture(f3).flatMap( v -> v);
+//                        return s;
+                    });
 
             Future<Flowable<List<Contributor>>> f2 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceB());
-            Flowable<List<Contributor>> f2Observable = Observable.fromFuture(f2);
+            Flowable<Flowable<List<Contributor>>> f2Observable = Flowable.fromFuture(f2);
             Flowable<List<Contributor>> f4Observable = f2Observable
                     .flatMap(integer -> {
                         System.out.println("Observed from f2: " + integer);
                         Future<Flowable<List<Contributor>>> f4 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceD(0));
-                        return Observable.fromFuture(f4);
+                        return Flowable.fromFuture(f4).flatMap( v -> v);
                     });
 
             Flowable<List<Contributor>> f5Observable = f2Observable
                     .flatMap(s -> {
                         System.out.println("Observed from f2: " + s);
                         Future<Flowable<List<Contributor>>> f5 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceE(0));
-                        return Observable.fromFuture(f5);
+                        return Flowable.fromFuture(f5).flatMap( v -> v);
                     });
 
-            Observable.zip(f3Observable, f4Observable, f5Observable, (map1, map2, map3) -> {
+            Flowable.zip(f3Observable, f4Observable, f5Observable, (map1, map2, map3) -> {
                 Map<String, List<Contributor>> map = new HashMap<>();
                 map.put("f3", map1);
                 map.put("f4", map2);
                 map.put("f5", map3);
                 return map;
-            }).subscribe(new Consumer<Map<String, List<Contributor>>>() {
-                @Override
-                public void accept(Map<String, List<Contributor>> map) throws Exception {
-
-                }
-            });
+            })
+            .subscribeOn(Schedulers.io())
+            .subscribe(map ->
+                    {
+                        _log("result -> " + ArrayUtils.toString(map));
+                        System.out.println("Finished in: " + (System.currentTimeMillis() - start) + "ms");
+                    }, Throwable::printStackTrace
+            );
 
         } finally {
             executor.shutdownNow();
