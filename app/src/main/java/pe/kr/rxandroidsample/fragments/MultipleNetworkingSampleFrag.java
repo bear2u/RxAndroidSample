@@ -163,43 +163,43 @@ public class MultipleNetworkingSampleFrag extends BaseFrag implements MyFragment
         try {
 
             Future<Flowable<List<Contributor>>> f1 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceA());
-            Flowable<List<Contributor>> f1Observable = Flowable.fromFuture(f1);
-            Observable<List<Contributor>> f3Observable = f1Observable
-                    .flatMap(s -> {
-                        System.out.println("Observed from f1: " + s);
-                        Future<Flowable<List<Contributor>>> f3 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceC(s));
-                        return Observable.fromFuture(f3);
-                    })
+//            Flowable<List<Contributor>> f1Observable = Flowable.fromFuture(f1);
+//            Observable<List<Contributor>> f3Observable = f1Observable
+//                    .flatMap(s -> {
+//                        System.out.println("Observed from f1: " + s);
+//                        Future<Flowable<List<Contributor>>> f3 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceC(s));
+//                        return Observable.fromFuture(f3);
+//                    });
 
 
-            Future<Flowable<List<Contributor>>> f2 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceB());
-            Flowable<List<Contributor>> f2Observable = Observable.fromFuture(f2);
-            Flowable<List<Contributor>> f4Observable = f2Observable
-                    .flatMap(integer -> {
-                        System.out.println("Observed from f2: " + integer);
-                        Future<Flowable<List<Contributor>>> f4 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceD(0));
-                        return Observable.fromFuture(f4);
-                    });
-
-            Flowable<List<Contributor>> f5Observable = f2Observable
-                    .flatMap(s -> {
-                        System.out.println("Observed from f2: " + s);
-                        Future<Flowable<List<Contributor>>> f5 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceE(0));
-                        return Observable.fromFuture(f5);
-                    });
-
-            Observable.zip(f3Observable, f4Observable, f5Observable, (map1, map2, map3) -> {
-                Map<String, List<Contributor>> map = new HashMap<>();
-                map.put("f3", map1);
-                map.put("f4", map2);
-                map.put("f5", map3);
-                return map;
-            }).subscribe(new Consumer<Map<String, List<Contributor>>>() {
-                @Override
-                public void accept(Map<String, List<Contributor>> map) throws Exception {
-
-                }
-            });
+//            Future<Flowable<List<Contributor>>> f2 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceB());
+//            Flowable<List<Contributor>> f2Observable = Observable.fromFuture(f2);
+//            Flowable<List<Contributor>> f4Observable = f2Observable
+//                    .flatMap(integer -> {
+//                        System.out.println("Observed from f2: " + integer);
+//                        Future<Flowable<List<Contributor>>> f4 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceD(0));
+//                        return Observable.fromFuture(f4);
+//                    });
+//
+//            Flowable<List<Contributor>> f5Observable = f2Observable
+//                    .flatMap(s -> {
+//                        System.out.println("Observed from f2: " + s);
+//                        Future<Flowable<List<Contributor>>> f5 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceE(0));
+//                        return Observable.fromFuture(f5);
+//                    });
+//
+//            Observable.zip(f3Observable, f4Observable, f5Observable, (map1, map2, map3) -> {
+//                Map<String, List<Contributor>> map = new HashMap<>();
+//                map.put("f3", map1);
+//                map.put("f4", map2);
+//                map.put("f5", map3);
+//                return map;
+//            }).subscribe(new Consumer<Map<String, List<Contributor>>>() {
+//                @Override
+//                public void accept(Map<String, List<Contributor>> map) throws Exception {
+//
+//                }
+//            });
 
         } finally {
             executor.shutdownNow();
