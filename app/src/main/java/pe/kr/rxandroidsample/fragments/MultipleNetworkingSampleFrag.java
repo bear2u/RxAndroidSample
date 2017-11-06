@@ -16,11 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -28,21 +27,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Function3;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import pe.kr.rxandroidsample.Contributor;
 import pe.kr.rxandroidsample.GithubService;
 import pe.kr.rxandroidsample.Helper;
 import pe.kr.rxandroidsample.R;
-import pe.kr.rxandroidsample.models.MultipleNetworkingSampleDataCls;
 import pe.kr.rxandroidsample.models.MultipleRealNetworkingSampleDataCls;
 
 import static pe.kr.rxandroidsample.LogUtils._log;
@@ -147,19 +140,25 @@ public class MultipleNetworkingSampleFrag extends BaseFrag implements MyFragment
         };
     }
 
+    long start;
     private void start(){
         try {
-            long start = System.currentTimeMillis();
+            start = System.currentTimeMillis();
             run();
-            System.out.println("Finished in: " + (System.currentTimeMillis() - start) + "ms");
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void networkRun(){
+//        Flowable<List<Contributor>> f1 = new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceA()
+
+    }
+
     private void run() throws Exception {
-        final ExecutorService executor = new ThreadPoolExecutor(4, 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+        final ExecutorService executor = new ThreadPoolExecutor(10, 10, 1, TimeUnit.MINUTES, new LinkedBlockingDeque<>());
         try {
 
             Future<Flowable<List<Contributor>>> f1 = executor.submit(new MultipleRealNetworkingSampleDataCls.CallToRemoteServiceA());
