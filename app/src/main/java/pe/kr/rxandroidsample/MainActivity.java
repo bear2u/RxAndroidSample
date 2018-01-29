@@ -20,6 +20,7 @@ import pe.kr.rxandroidsample.fragments.BaseFrag;
 import pe.kr.rxandroidsample.fragments.CachingStrategyListSampleFrag;
 import pe.kr.rxandroidsample.fragments.DiffUtilSampleFrag;
 import pe.kr.rxandroidsample.fragments.FormValidationSampleFrag;
+import pe.kr.rxandroidsample.fragments.MultiCastingSampleFrag;
 import pe.kr.rxandroidsample.fragments.MultipleNetworkingSampleFrag;
 import pe.kr.rxandroidsample.fragments.RetrofitSampleFrag;
 import pe.kr.rxandroidsample.fragments.SearchExampleFrag;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     private static final int _USING_DEBOUNCE_SEARCH_BAR = 3;
     private static final int _USING_DIFFUTIL = 4;
     private static final int _USING_MULTIPLE_NETWORKING_CONNECT = 5;
+    private static final int _USING_MULTINGCASTING = 6;
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -96,6 +98,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case _USING_MULTIPLE_NETWORKING_CONNECT:
                 fragment = MultipleNetworkingSampleFrag.newInstance( title );
+                break;
+            case _USING_MULTINGCASTING:
+                fragment = MultiCastingSampleFrag.newInstance( title );
                 break;
         }
 
