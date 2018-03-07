@@ -14,6 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -65,14 +66,16 @@ public class BlockingMultipleClickingSampleFrag extends BaseFrag implements MyFr
     }
 
     private void initSubject(){
-        publishSubject
-                .throttleFirst(1, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(view -> {
-                    Timber.d("clicked -> " + view.getId());
-                    resultTxt.setText("clicked id : " + view.getId());
-                    Toast.makeText(getActivity(),view.getId()+"",Toast.LENGTH_SHORT).show();
-                });
+        disposable = publishSubject
+                        .throttleFirst(1, TimeUnit.SECONDS)
+                        .flatMap(this::connectRemote)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(view -> {
+                            Timber.d("clicked -> " + view.getId());
+                            resultTxt.setText("clicked id : " + view.getId());
+                            Toast.makeText(getActivity(),view.getId()+"",Toast.LENGTH_SHORT).show();
+                        });
     }
 
     @OnClick({R.id.btn1, R.id.btn2, R.id.btn3})
@@ -83,5 +86,10 @@ public class BlockingMultipleClickingSampleFrag extends BaseFrag implements MyFr
     @Override
     public void onItemClick(View view, int position) {
 
+    }
+
+    private Observable<View> connectRemote(View view){
+        //TODO 여기에서 분기점 만들어서 통신함
+        return Observable.just(view); //<-- 여기에 레트로핏 넣음
     }
 }
