@@ -8,6 +8,7 @@
         <item>DiffUtil 활용</item>
         <item>다중 네트워크 접속 예제</item>
         <item>멀티캐스팅 예제</item>
+        <item>멀티 클릭 방지</item>
     </string-array>
 
     <string-array name="items_sample">

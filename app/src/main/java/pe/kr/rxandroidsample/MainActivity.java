@@ -17,6 +17,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pe.kr.rxandroidsample.fragments.BaseFrag;
+import pe.kr.rxandroidsample.fragments.BlockingMultipleClickingSampleFrag;
 import pe.kr.rxandroidsample.fragments.CachingStrategyListSampleFrag;
 import pe.kr.rxandroidsample.fragments.DiffUtilSampleFrag;
 import pe.kr.rxandroidsample.fragments.FormValidationSampleFrag;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     private static final int _USING_DIFFUTIL = 4;
     private static final int _USING_MULTIPLE_NETWORKING_CONNECT = 5;
     private static final int _USING_MULTINGCASTING = 6;
+    private static final int _USING_BLOCKING_MULTI_CLICK = 7;
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -101,6 +103,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case _USING_MULTINGCASTING:
                 fragment = MultiCastingSampleFrag.newInstance( title );
+                break;
+            case _USING_BLOCKING_MULTI_CLICK:
+                fragment = BlockingMultipleClickingSampleFrag.newInstance( title );
                 break;
         }
 
