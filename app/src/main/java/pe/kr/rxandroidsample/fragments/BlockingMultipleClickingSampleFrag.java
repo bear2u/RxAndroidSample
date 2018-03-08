@@ -63,11 +63,13 @@ public class BlockingMultipleClickingSampleFrag extends BaseFrag implements MyFr
         if(disposable!=null && !disposable.isDisposed()) {
             disposable.dispose();
         }
+
+        unbinder.unbind();
     }
 
     private void initSubject(){
         disposable = publishSubject
-                        .throttleFirst(1, TimeUnit.SECONDS)
+                        .throttleFirst(500, TimeUnit.MILLISECONDS)
                         .flatMap(this::connectRemote)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
